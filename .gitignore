@@ -1,0 +1,14 @@
+#### jupyter notebook ####
+.ipynb_checkpoints/
+
+#### MacOS ####
+.DS_Store
+
+#### PowerPoint ####
+*.pptx
+
+#### Python cache folder ####
+__pycache__/
+
+#### Google Maps API Key ####
+googlemapskey.txt
