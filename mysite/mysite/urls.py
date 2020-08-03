@@ -15,13 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-import restaurant_map.views
 
 ## 첫 번째 인수는 일치시킬 경로, 두 번째 인수는 패턴이 일치할 때 호출되는 함수
 urlpatterns = [
+    path('admin/', admin.site.urls),
 	path('polls/',include('polls.urls')),
 	path('restaurant_map/',include('restaurant_map.urls')),
-	path('', restaurant_map.views.index, name='index'),
-    path('admin/', admin.site.urls),
-    path('oauth/', restaurant_map.views.oauth, name='oauth'),
 ]

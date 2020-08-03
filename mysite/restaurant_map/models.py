@@ -5,5 +5,6 @@ from django.db import models
 # python manage.py makemigrations
 # python manage.py migrate
 
-class Blog(models.Model):
-	text = models.TextField()
+class RestaurantList(models.Model):
+	name = models.TextField(max_length=50)
+	address = models.TextField(max_length=100)
