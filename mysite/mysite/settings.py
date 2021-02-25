@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'common.apps.CommonConfig',
     'restaurant_map.apps.RestaurantMapConfig',
     'polls.apps.PollsConfig',
     'django.contrib.admin',
@@ -145,4 +146,4 @@ AUTHENTICATION_BACKENDS = (
 )
 
 SITE_ID = 1
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/restaurant_map/map'
