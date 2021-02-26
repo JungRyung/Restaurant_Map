@@ -1,3 +1,5 @@
+{% extends "base.html" %}
+{% block body %}
 <div class="container my-3">
     <form method="post" class="post-form" action="{% url 'common:login' %}">
         {% csrf_token %}
@@ -13,5 +15,9 @@
                    value="{{ form.password.value|default_if_none:'' }}">
         </div>
         <button type="submit" class="btn btn-primary">로그인</button>
+        <div class="col-8 text-right">
+            <span>또는 <a href="{% url 'common:signup' %}">계정을 만드세요.</a></span>
+        </div>
     </form>
 </div>
+{% endblock %}

@@ -147,3 +147,4 @@ AUTHENTICATION_BACKENDS = (
 
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/restaurant_map/map'
+LOGOUT_REDIRECT_URL = '/restaurant_map'
