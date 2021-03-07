@@ -1,96 +1,89 @@
 {% extends "map_base.html" %}
 
-{% if user.is_authenticated %}
+{% block head %}
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=4f2e20c97e167fb52c9344323cd0ef86&libraries=services"></script>
+{% endblock %}
 
-    {% block head %}
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=4f2e20c97e167fb52c9344323cd0ef86&libraries=services"></script>
-    {% endblock %}
+{% block map %}
+<script>
+    // 사용할 변수 선언
+    var i = 0;
+</script>
+<div id="map" style="width:100vw;height:100vh;"></div>
+<script>
+    var container = document.getElementById('map');
+    var options = {
+        center: new kakao.maps.LatLng(33.450701, 126.570667),
+        level: 3
+    };
+    var map = new kakao.maps.Map(container, options);
 
-    {% block map %}
-    <script>
-        // 사용할 변수 선언
-        var i = 0;
-    </script>
-    <div id="map" style="width:100vw;height:100vh;"></div>
-    <script>
-        var container = document.getElementById('map');
-        var options = {
-            center: new kakao.maps.LatLng(33.450701, 126.570667),
-            level: 3
-        };
-        var map = new kakao.maps.Map(container, options);
-
-        // 현재 사용자의 위치를 맵의 중앙으로
-        // HTML5의 geolocation으로 사용할 수 있는지 확인합니다 
-        if (navigator.geolocation) {
+    // 현재 사용자의 위치를 맵의 중앙으로
+    // HTML5의 geolocation으로 사용할 수 있는지 확인합니다 
+    if (navigator.geolocation) {
+        
+        // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+        navigator.geolocation.getCurrentPosition(function(position) {
             
-            // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-            navigator.geolocation.getCurrentPosition(function(position) {
-                
-                var lat = position.coords.latitude, // 위도
-                    lon = position.coords.longitude; // 경도
-                
-                var locPosition = new kakao.maps.LatLng(lat, lon); // 위치를 geolocation으로 얻어온 좌표로 생성합니다
-                
-                map.setCenter(locPosition);      
-            });
+            var lat = position.coords.latitude, // 위도
+                lon = position.coords.longitude; // 경도
             
-        } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+            var locPosition = new kakao.maps.LatLng(lat, lon); // 위치를 geolocation으로 얻어온 좌표로 생성합니다
             
-            var locPosition = new kakao.maps.LatLng(33.450701, 126.570667),    
-                message = 'geolocation을 사용할수 없어요..'
-                
-                map.setCenter(locPosition); 
-        }
-
-        var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-        mapOption = { 
-            center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-            level: 3 // 지도의 확대 레벨
-        };
-    </script>
-
-    <!--DB에 등록된 맛집의 위치와 이름을 마커로 표시-->
-    {% for restaurant in object_list %}
-    <script>
-        // 주소-좌표 변환 객체를 생성합니다
-        var geocoder = new kakao.maps.services.Geocoder();
-
-        // 주소로 좌표를 검색합니다
-        geocoder.addressSearch('{{ restaurant.address }}', function(result, status) {
-
-            // 정상적으로 검색이 완료됐으면 
-            if (status === kakao.maps.services.Status.OK) {
-
-                var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-
-                // 결과값으로 받은 위치를 마커로 표시합니다
-                var marker = []
-                marker[i] = new kakao.maps.Marker({
-                    map: map,
-                    position: coords
-                });
-
-                // 인포윈도우로 장소에 대한 설명을 표시합니다
-                var infowindow = new kakao.maps.InfoWindow({
-                    content: '<div style="width:150px;text-align:center;padding:6px 0;">{{ restaurant.name }}</div>'
-                });
-                infowindow.open(map, marker[i]);
-                
-                // 클릭 시 페이지 이동
-                kakao.maps.event.addListener(marker[i], 'click', function() {
-                    location.href="{% url 'restaurant_map:restaurant_detail' restaurant.id %}"; 
-                });
-            }
+            map.setCenter(locPosition);      
         });
+        
+    } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+        
+        var locPosition = new kakao.maps.LatLng(33.450701, 126.570667),    
+            message = 'geolocation을 사용할수 없어요..'
+            
+            map.setCenter(locPosition); 
+    }
 
-        i++;
-    </script>
-    {% endfor %}
-    {% endblock %}
-{% else %}
-    <font size="2em" color="green">
-        로그인을 해주세요.
-    </font>
-{% endif %}
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+    mapOption = { 
+        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+        level: 3 // 지도의 확대 레벨
+    };
+</script>
+
+<!--DB에 등록된 맛집의 위치와 이름을 마커로 표시-->
+{% for restaurant in object_list %}
+<script>
+    // 주소-좌표 변환 객체를 생성합니다
+    var geocoder = new kakao.maps.services.Geocoder();
+
+    // 주소로 좌표를 검색합니다
+    geocoder.addressSearch('{{ restaurant.address }}', function(result, status) {
+
+        // 정상적으로 검색이 완료됐으면 
+        if (status === kakao.maps.services.Status.OK) {
+
+            var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+            // 결과값으로 받은 위치를 마커로 표시합니다
+            var marker = []
+            marker[i] = new kakao.maps.Marker({
+                map: map,
+                position: coords
+            });
+
+            // 인포윈도우로 장소에 대한 설명을 표시합니다
+            var infowindow = new kakao.maps.InfoWindow({
+                content: '<div style="width:150px;text-align:center;padding:6px 0;">{{ restaurant.name }}</div>'
+            });
+            infowindow.open(map, marker[i]);
+            
+            // 클릭 시 페이지 이동
+            kakao.maps.event.addListener(marker[i], 'click', function() {
+                location.href="{% url 'restaurant_map:restaurant_detail' restaurant.id %}"; 
+            });
+        }
+    });
+
+    i++;
+</script>
+{% endfor %}
+{% endblock %}
 
